@@ -1,16 +1,24 @@
 package co.edu.unisabana.SigaApp;
 import java.util.ArrayList;
+import java.util.Random;
 public class Curso {
     private ProfesorDTO profesor;
+
+    private int idCurso;
     private ArrayList<EstudianteDTO> estudiantes;
 
-    public Curso(ProfesorDTO profesor, ArrayList<EstudianteDTO> estudiantes) {
-        this.profesor = profesor;
-        this.estudiantes = estudiantes;
-    }
     public Curso(ProfesorDTO profesor) {
+        this.idCurso = generarIdCurso();
         this.profesor = profesor;
         this.estudiantes = new ArrayList<>();
+    }
+    public int getIdCurso() {
+        return idCurso;
+    }
+
+    private int generarIdCurso() {
+        Random random = new Random();
+        return random.nextInt(10000);
     }
     public void agregarEstudiante(EstudianteDTO estudiante) {
         estudiantes.add(estudiante);

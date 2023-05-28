@@ -4,10 +4,10 @@ import java.util.Objects;
 
 public class Asignatura {
     private String nombre;
-    private String facultad;
+    private FacultadEnum facultad;
     private ArrayList<Curso> cursos;
 
-    public Asignatura(String nombre, int codigo, String facultad) {
+    public Asignatura(String nombre, int codigo, FacultadEnum facultad) {
         this.nombre = nombre;
         this.facultad = facultad;
         this.cursos = new ArrayList<>();
