@@ -1,6 +1,7 @@
 package co.edu.unisabana.SigaApp;
 import java.util.ArrayList;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -22,27 +23,24 @@ public class GeneralController {
         return asignaturas;
     }
     @PostMapping("/asignatura/crear")
-    public void crearAsignatura(@RequestBody Asignatura asignatura) {
+    public void crearAsignatura(@RequestBody @Valid Asignatura asignatura) {
         asignaturas.add(asignatura);
     }
 
     @DeleteMapping("/asignatura/eliminar/{codigo}")
     public void eliminarAsignatura(@PathVariable int codigo) {
-        Asignatura asignaturaAEliminar = null;
-        for (Asignatura asignatura : asignaturas) {
-            if (asignatura.getCodigo() == codigo) {
-                asignaturaAEliminar = asignatura;
-                break;
-            }
-        }
-        if (asignaturaAEliminar != null) {
-            asignaturas.remove(asignaturaAEliminar);
-        }
+        asignaturas.removeIf(asignatura -> asignatura.getCodigo() == codigo);
     }
 
     @GetMapping("/asignaturas/facultad/{facultad}")
-    public void eliminarAsignatura(@PathVariable int codigo) {
-        asignaturas.removeIf(asignatura -> asignatura.getCodigo() == codigo);
+    public ArrayList<Asignatura> filtrarAsignaturasPorFacultad(@PathVariable FacultadEnum facultad) {
+        ArrayList<Asignatura> asignaturasFiltradas = new ArrayList<>();
+        for (Asignatura asignatura : asignaturas) {
+            if (asignatura.getFacultad() == facultad) {
+                asignaturasFiltradas.add(asignatura);
+            }
+        }
+        return asignaturasFiltradas;
     }
 
     @GetMapping("/curso/todos")
@@ -51,7 +49,9 @@ public class GeneralController {
     }
 
     @PostMapping("/curso/crear")
-    public void crearCurso(@RequestBody Curso curso) {
+    public void crearCurso(@RequestBody @Valid Curso curso) {
+        ProfesorDTO profesor = curso.getProfesor();
+        Curso newCurso = new Curso(profesor);
         cursos.add(curso);
     }
     @DeleteMapping("/cursos/eliminar/{idCurso}")
@@ -59,26 +59,50 @@ public class GeneralController {
         cursos.removeIf(curso -> curso.getIdCurso() == idCurso);
     }
 
+    @PostMapping("/curso/{cursoId}/estudiante/agregar")
+    public void agregarEstudianteACurso(@PathVariable int cursoId, @RequestBody EstudianteDTO estudianteDTO) {
+        Curso curso = obtenerCursoPorId(cursoId);
+        if (curso != null) {
+            curso.agregarEstudiante(estudianteDTO);
+            actualizarCursoEnFuenteDeDatos(curso);
+        }
+    }
+
+    private void actualizarCursoEnFuenteDeDatos(Curso curso) {
+        // Lógica para actualizar el curso en la fuente de datos (base de datos, archivo, etc.)
+    }
+
+    private Curso obtenerCursoPorId(int cursoId) {
+        for (Curso curso : cursos) {
+            if (curso.getIdCurso() == cursoId) {
+                return curso;
+            }
+        }
+        return null;
+    }
+
+    @GetMapping("/estudiante/todos")
+    public ArrayList<EstudianteDTO> getEstudiantes() {
+        return estudiantes;
+    }
     @PostMapping("/estudiante/crear")
-    public void crearEstudiante(@RequestBody EstudianteDTO estudiante) {
+    public void crearEstudiante(@RequestBody @Valid EstudianteDTO estudiante) {
         estudiantes.add(estudiante);
     }
+
 
     @DeleteMapping("/estudiante/eliminar/{codigo}")
     public void eliminarEstudiante(@PathVariable int codigo) {
         estudiantes.removeIf(estudiante -> estudiante.getCodigo() == codigo);
     }
-    @GetMapping("/estudiante")
-    public ArrayList<EstudianteDTO> getEstudiantes() {
-        return estudiantes;
-    }
+
 
     @GetMapping("/profesor/todos")
     public ArrayList<ProfesorDTO> getProfesores() {
         return profesores;
     }
     @PostMapping("/profesor/crear")
-    public void crearProfesor(@RequestBody ProfesorDTO profesor) {
+    public void crearProfesor(@RequestBody @Valid ProfesorDTO profesor) {
         profesores.add(profesor);
     }
 

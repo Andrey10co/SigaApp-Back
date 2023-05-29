@@ -1,9 +1,11 @@
 package co.edu.unisabana.SigaApp;
+import lombok.Data;
+
 import java.util.ArrayList;
 import java.util.Random;
+@Data
 public class Curso {
     private ProfesorDTO profesor;
-
     private int idCurso;
     private ArrayList<EstudianteDTO> estudiantes;
 

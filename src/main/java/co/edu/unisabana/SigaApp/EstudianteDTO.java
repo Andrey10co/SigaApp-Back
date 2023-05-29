@@ -1,21 +1,23 @@
 package co.edu.unisabana.SigaApp;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Objects;
 
+import jakarta.validation.constraints.*;
+import lombok.Data;
+@Data
 class EstudianteDTO {
-    @JsonProperty
+
+    @NotNull(message = "Este campo es requerido")
     private String nombre;
+    @NotNull(message = "Ingrese un valor para el campo")
+    @Min(value = 0, message = "El código debe ser mínimo 4 dígitos")
+    @Max(value = 9999, message = "El código debe ser maximo 4 dígitos")
     private int codigo;
+
+    @NotNull(message = "Ingrese un valor para el campo")
     private FacultadEnum facultad;
 
 
-    public EstudianteDTO(String nombre, int codigo, FacultadEnum facultad) {
-        this.nombre = nombre;
-        this.codigo = codigo;
-        this.facultad = facultad;
-    }
 
     @Override
     public boolean equals(Object o) {
